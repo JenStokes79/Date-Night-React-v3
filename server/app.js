@@ -6,7 +6,7 @@ import helmet from 'helmet';
 import compression from 'compression';
 import path from 'path';
 const mongoose = require("mongoose");
-// const port = process.env.PORT || 3006;
+const port = process.env.PORT || 3001;
 
 import env from './config/env';
 console.log('env top', env);
@@ -53,7 +53,9 @@ mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/datenightusers"
 // API routes - list routes individually
 
 require('./routes/api/signin')(app);
-
+require('./routes/api/search')(app);
+require('./routes/api/wheelSearch')(app);
+require('./routes/api/searchMovie')(app);
 
 
 // Load React App

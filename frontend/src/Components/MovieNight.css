@@ -1,0 +1,54 @@
+.Footer {
+    background-color: teal;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    padding-left: 50px;
+    font-size: 13px;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+  }
+
+  #selection-div {
+      color: black;
+      text-align: center;
+      margin-bottom: 100px;
+  }
+
+  button{
+      min-width: 200px;
+  }
+
+  h5{
+      text-align: center;
+  }
+  
+  .movienight-page{
+      margin-top:50px;
+      margin-bottom:100px;
+  }
+
+  .zipcode {
+      text-align: center;
+  }
+
+  .food_return {
+      text-align: center;
+  }
+
+  .findMovie {
+    margin-left:20px;
+}
+
+  .findDate{
+      margin-left:20px;
+  }
+
+  /* .card{
+      max-height: 250px;
+  }
+
+  img{
+      max-height: 250px;
+  } */

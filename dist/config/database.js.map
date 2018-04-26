@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../server/config/database.js"],"names":["module","exports","db","db_dev"],"mappings":";;AAAAA,OAAOC,OAAP,GAAiB;AACfC,MAAI,yCADW;AAEfC,UAAQ;AAFO,CAAjB","file":"database.js","sourcesContent":["module.exports = {\n  db: \"mongodb://username:password@url:port/db\",\n  db_dev: \"mongodb://localhost:27017/login_demo\"\n};\n"]}

@@ -1,107 +1,185 @@
-import React from "react";
-import { findDOMNode } from "react-dom";
-import $ from "jquery";
+import React, { Component } from "react";
+import { Button, Table, Col, Card, CardTitle, MediaBox, Row, CardPanel, Dropdown, NavItem, Input } from "react-materialize";
 import "./Spinner.css";
 
-// <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+class Spinner extends Component {
 
-class Spinner extends React.Component{
-    constructor() {
-        super();
-        }
-    render(){
-        //set default degree (360*5)
-var degree = 1800;
-//number of clicks = 0
-var clicks = 0;
+	constructor(props) {
+		super(props);
+		this.state = {
+			zipcode: '',
+			wheelDate: "",
+			degree: 1800,
+			click: 1,
+			totalDegree: 0,
+			data: [{}],
+			haveAllUserData: false
+		}
+	}
 
-$(document).ready(function(){
-	
-	/*WHEEL SPIN FUNCTION*/
-	$('#spin').click(function(){
-		
-		//add 1 every click
-		clicks ++;
-		
-		/*multiply the degree by number of clicks
-	  generate random number between 1 - 360, 
-    then add to the new degree*/
-		var newDegree = degree*clicks;
-		var extraDegree = Math.floor(Math.random() * (360 - 1 + 1)) + 1;
-		var totalDegree = newDegree+extraDegree;
-		
-		/*let's make the spin btn to tilt every
-		time the edge of the section hits 
-		the indicator*/
-		$('#wheel .sec').each(function(){
-			var t = $(this);
-			var noY = 0;
-			
-			var c = 0;
-			var n = 700;	
-			var interval = setInterval(function () {
-				c++;				
-				if (c === n) { 
-					clearInterval(interval);				
-				}	
-					
-				var aoY = t.offset().top;
-				$("#txt").html(aoY);
-				console.log(aoY);
-				
-				/*23.7 is the minumum offset number that 
-				each section can get, in a 30 angle degree.
-				So, if the offset reaches 23.7, then we know
-				that it has a 30 degree angle and therefore, 
-				exactly aligned with the spin btn*/
-				if(aoY < 23.89){
-					console.log('<<<<<<<<');
-					$('#spin').addClass('spin');
-					setTimeout(function () { 
-						$('#spin').removeClass('spin');
-					}, 100);	
-				}
-			}, 10);
-			
-			$('#inner-wheel').css({
-				'transform' : 'rotate(' + totalDegree + 'deg)'			
-			});
-		 
-			noY = t.offset().top;
-			
+	spinAction = () => {
+		if (this.state.zipcode.length === 5) {
+
+			const click = this.state.click + 1;
+			let wheelDate = '';
+
+			const newDegree = this.state.degree * this.state.click;
+			const extraDegree = Math.floor(Math.random() * 360) + 1;
+			const totalDegree = newDegree + extraDegree;
+
+			switch (true) {
+				case extraDegree >= 270 && extraDegree < 330:
+					wheelDate = 'zoo';
+					break;
+				case extraDegree >= 30 && extraDegree < 90:
+					wheelDate = 'archery';
+					break;
+				case extraDegree >= 90 && extraDegree < 150:
+					wheelDate = 'bar';
+					break;
+				case extraDegree >= 150 && extraDegree < 210:
+					wheelDate = 'concert';
+					break;
+				case extraDegree >= 210 && extraDegree < 270:
+					wheelDate = 'karaoke';
+					break;
+				default:
+					wheelDate = 'museum';
+			}
+
+			this.setState({
+				click,
+				totalDegree,
+				wheelDate
+			})
+			this.props.setWheelDate(wheelDate);
+			this.setState({ haveAllUserData:true})
+
+		}
+	}
+
+
+	handleUserSelection(type, selection) {
+		console.log("selection", selection)
+		this.setState({
+			[type]: selection
+		}, () => {
+			this.haveAllUserData();
+		})
+	}
+
+	haveAllUserData() {
+		if (this.state.wheelDate.length > 0 && this.state.zipcode.length === 5 && this.state) {
+			this.setState({ haveAllUserData: true });
+		} else {
+			this.setState({ haveAllUserData: false })
+		}
+	}
+
+	returnYelp(yelpData) {
+		this.setState({
+			data: yelpData
+		})
+	}
+
+	getYelpData() {
+		fetch('/api/wheelSearch', {
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+			},
+			method: 'post',
+			body: JSON.stringify({
+				wheelDate: this.state.wheelDate,
+				zipcode: this.state.zipcode,
+			})
+		}).then((res) => {
+			if (res.status === 503) {
+				this.setState({
+					sendSuccessful: false,
+					isSent: false,
+					isSending: false,
+					sendFailure: true
+				});
+			}
+			// console.log('res.json',res.json())
+			return res.json();
+		}).then((data) => {
+			console.log('data', data)
+			this.returnYelp(data.businesses);
+			if (data.message === 'mail sent') {
+				this.setState({
+					sendSuccessful: true,
+					sendFailure: false,
+					email: '',
+					subject: '',
+					body: '',
+					isSent: true,
+					isSending: false,
+					emailValid: false
+				});
+			}
 		});
-	});
+	}
+
+	render() {
+		console.log(this.state.wheelDate, this.state.zipcode, this.state.haveAllUserData, this.state.click)
+		return (
+			<div className="Spinner">
+				<Row id='zipcode-wrapper'><Col className='offset-s5' s={4}>
+					<Input name='zipcode' label='Enter Zip Code' className="zipcode" value={this.state.zipcode} onChange={(event) => { this.handleUserSelection('zipcode', event.target.value) }} />
+				</Col></Row>
+				<Row><Col className='offset-s5' s={4}>
+					<div id="wrapper">
+						<div id="wheel">
+							<div id="inner-wheel" style={{ 'transform': `rotate(${this.state.totalDegree}deg)` }}>
+								<div className="sec"><span className="fa"><i className="medium material-icons">pets</i></span></div>
+								<div className="sec"><span className="fa"><i className="medium material-icons">mic</i></span></div>
+								<div className="sec"><span className="fa"><i className="medium material-icons">music_note</i></span></div>
+								<div className="sec"><span className="fa"><i className="medium material-icons">local_bar</i></span></div>
+								<div className="sec"><span className="fa"><i className="medium material-icons">album</i></span></div>
+								<div className="sec"><span className="fa"><i className="medium material-icons">brush</i></span></div>
+							</div>
+							<div id="spin" onClick={this.spinAction}>
+								<div id="inner-spin"></div>
+							</div>
+							<div id="shine"></div>
+						</div>
+
+					</div>
+				</Col></Row>
+				<Row><Col className='offset-s5' s={4}>
+					<Button className="venue-button-container" disabled={!this.state.haveAllUserData} onClick={this.getYelpData.bind(this)} >Find Venues Near You!</Button>
+				</Col></Row>
+				<Row className='result-container'>
+				{this.state.data.map((businesses, i)=>(
+				<div class="col s6 m2">
+					<div  hidden={!this.state.haveAllUserData} class="card small">
+						<div class="card-image">
+							<img class='card-img' src={businesses.image_url} />
+						</div>
+						<div class="card-content">
+							<p>{businesses.name}</p>
+							<p>{businesses.display_phone}</p>
+						</div>
+					</div>
+				</div>
+				))}
+				</Row>
+				</div>
+			)
+		}
+	}
 	
 	
-	
-});//DOCUMENT READY
-	
-
-
-        return(
-            <div className="Spinner">
-                <div id="wrapper">
-                    <div id="wheel">
-                        <div id="inner-wheel">
-                            <div className="sec"><span className="fa fa-bell-o"></span></div>
-                            <div className="sec"><span className="fa fa-comment-o"></span></div>
-                            <div className="sec"><span className="fa fa-smile-o"></span></div>
-                            <div className="sec"><span className="fa fa-heart-o"></span></div>
-                            <div className="sec"><span className="fa fa-star-o"></span></div>
-                            <div className="sec"><span className="fa fa-lightbulb-o"></span></div>
-                        </div>       
-                        <div id="spin">
-                            <div id="inner-spin"></div>
-                        </div>
-                        <div id="shine"></div>
-                    </div>
-                    <div id="txt"></div>
-                </div>
-            </div>
-        )
-    }
-}
-
-
-
-export default Spinner
+	export default Spinner;
+	// 	{this.state.data.map((businesses, i)=>(
+	// 	<Card>
+	// 	<div className='wheel-date-result' key={i}>
+	// 		{businesses.name}
+	// 	</div>
+	// 	<div className='wheel-date-result' key={i}>
+	// 		{businesses.rating}
+	// 	</div>
+	// 	</Card>
+	// ))}

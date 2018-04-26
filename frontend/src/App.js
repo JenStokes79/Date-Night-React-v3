@@ -7,12 +7,11 @@ import Logon from "./Components/Logon";
 
 class App extends React.Component{
   render(){
-    return(
-    <div className="page">
-      <Logon />
-    </div>
-    )
+    return <div className="page">
+        <Logon />
+      </div>;
   }
 }
 
 export default App;
+

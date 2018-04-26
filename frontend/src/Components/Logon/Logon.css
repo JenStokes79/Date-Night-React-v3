@@ -1,10 +1,12 @@
 
 h3 {
     font-family: Berlin Sans FB Demi; 
+    color: white;
 }
 
 h4 {
     color: teal;
+    text-align: center;
 }
 
 h5 {
@@ -14,9 +16,68 @@ h5 {
 input {
     color: black;
 }
-.container {
-   width: 10%;
-   margin-left: 10%;
-   flex-wrap: wrap;
-   
+/* .container2 {
+    margin-left: 1400px;
+    width: 100px;
+    margin-top: 10px; 
+    transition: none;
+ 
+}
+
+.container1 {
+    width: 100px;
+    margin-left: 1100px;
+    margin-top: -67px;
+} */
+
+button.sign-up-btn{
+    width: 100 px;
+    position: absolute;
+    top:8px;
+    right:250px;
+    /* float: right; */
+}
+button.sign-in-btn{
+    width: 100 px;
+    position: absolute;
+    top:8px;
+    right:0px;
+    /* float: right; */
+}
+
+.button-container{
+    width:100%;
+    height: 50px;
+    position: relative;
+}
+.screen {
+    position: absolute;
+    top: 0; right: 0; bottom: 0; left: 0;
+    background: white;
+}
+
+
+body {
+  background-color: white;
+}
+
+p.homepage-blk {
+    color: black;
+    text-align: center;
+    font-family: Berlin Sans FB Demi; 
+    font-size: 24px;
+
+}
+.btn-flat {
+    color: white;
+}
+
+
+
+.modal-overlay {
+background: 0;
+}
+
+.indicator-item.active {
+    background-color: black;
 }
