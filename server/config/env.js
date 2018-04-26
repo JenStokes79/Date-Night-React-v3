@@ -11,7 +11,7 @@ const env = {
   },
   dev: {
     name: 'dev',
-    port: 4000
+    port: 3000
   },
   test: {
     name: 'test',
