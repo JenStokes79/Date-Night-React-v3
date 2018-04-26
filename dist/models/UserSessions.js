@@ -1,8 +1,6 @@
-"use strict";
+const mongoose = require("mongoose");
 
-var mongoose = require("mongoose");
-
-var UserSessionSchema = new mongoose.Schema({
+const UserSessionSchema = new mongoose.Schema({
   userId: {
     type: String,
     default: -1

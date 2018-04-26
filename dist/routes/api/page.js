@@ -1,22 +1,17 @@
-"use strict";
+/**
+ *
+ * Example route for page
+ *
+ */
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
+import { Router } from "express";
 
-var _express = require("express");
-
-var router = (0, _express.Router)(); /**
-                                      *
-                                      * Example route for page
-                                      *
-                                      */
-
+const router = Router();
 router.route("/getPageData").get(getPageData);
 
 function getPageData(req, res) {
   res.status(200).json("Page Data");
 }
 
-exports.default = router;
+export default router;
 //# sourceMappingURL=page.js.map

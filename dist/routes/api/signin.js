@@ -1,17 +1,12 @@
-"use strict";
+const User = require("../../models/User");
+const UserSessions = require("../../models/UserSessions");
 
-var User = require("../../models/User");
-var UserSessions = require("../../models/UserSessions");
-
-module.exports = function (app) {
-  app.post("/api/account/signup", function (req, res, next) {
+module.exports = app => {
+  app.post("/api/account/signup", (req, res, next) => {
     console.log('req.body', req.body);
-    var body = req.body;
-    var firstName = body.firstName,
-        lastName = body.lastName,
-        password = body.password;
-    var email = body.email;
-
+    const { body } = req;
+    const { firstName, lastName, password } = body;
+    let { email } = body;
 
     if (!firstName) {
       return res.send({
@@ -48,7 +43,7 @@ module.exports = function (app) {
 
     User.find({
       email: email
-    }, function (err, previousUsers) {
+    }, (err, previousUsers) => {
       if (err) {
         return res.send({
           success: false,
@@ -61,13 +56,13 @@ module.exports = function (app) {
         });
       }
 
-      var newUser = new User();
+      const newUser = new User();
 
       newUser.email = email;
       newUser.firstName = firstName;
       newUser.lastName = lastName;
       newUser.password = newUser.generateHash(password);
-      newUser.save(function (err, user) {
+      newUser.save((err, user) => {
         if (err) {
           return res.send({
             success: false,
@@ -78,17 +73,16 @@ module.exports = function (app) {
         return res.send({
           success: true,
           message: "Sign Up Successful!",
-          user: user
+          user
         });
       });
     });
   });
 
-  app.post("/api/account/signin", function (req, res, next) {
-    var body = req.body;
-    var password = body.password;
-    var email = body.email;
-
+  app.post("/api/account/signin", (req, res, next) => {
+    const { body } = req;
+    const { password } = body;
+    let { email } = body;
 
     if (!email) {
       return res.send({
@@ -107,7 +101,7 @@ module.exports = function (app) {
 
     User.find({
       email: email
-    }, function (err, users) {
+    }, (err, users) => {
       if (err) {
         return res.send({
           success: false,
@@ -120,7 +114,7 @@ module.exports = function (app) {
           message: "Error: Invalid"
         });
       }
-      var user = users[0];
+      const user = users[0];
       if (!user.validPassword(password)) {
         return res.send({
           success: false,
@@ -129,9 +123,9 @@ module.exports = function (app) {
       }
       // otherwise correct user
 
-      var userSessions = new UserSessions();
+      const userSessions = new UserSessions();
       userSessions.userId = user._id;
-      userSessions.save(function (err, doc) {
+      userSessions.save((err, doc) => {
         if (err) {
           return res.send({
             success: false,
@@ -148,15 +142,15 @@ module.exports = function (app) {
 
   // verify the token
 
-  app.get("/api/account/verify", function (req, res, next) {
-    var query = req.query;
-    var token = query.token;
+  app.get("/api/account/verify", (req, res, next) => {
+    const { query } = req;
+    const { token } = query;
     //?token = test
 
     UserSessions.find({
       _id: token,
       isDeleted: false
-    }, function (err, sessions) {
+    }, (err, sessions) => {
       if (err) {
         return res.send({
           success: false,
@@ -178,17 +172,16 @@ module.exports = function (app) {
   });
 
   //log out
-  app.get("/api/account/logout", function (req, res, next) {
-    var query = req.query;
-    var token = query.token;
-
+  app.get("/api/account/logout", (req, res, next) => {
+    const { query } = req;
+    const { token } = query;
 
     UserSessions.findOneAndUpdate({
       _id: token,
       isDeleted: false
     }, {
       $set: { isDeleted: true }
-    }, null, function (err, sessions) {
+    }, null, (err, sessions) => {
       if (err) {
         return res.send({
           success: false,

@@ -1,16 +1,12 @@
-"use strict";
+/**
+ *
+ * Example route for API
+ *
+ */
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
+import { Router } from "express";
 
-var _express = require("express");
-
-var router = (0, _express.Router)(); /**
-                                      *
-                                      * Example route for API
-                                      *
-                                      */
+const router = Router();
 
 router.route("/info").get(getInfo);
 
@@ -20,5 +16,5 @@ function getInfo(req, res) {
   });
 }
 
-exports.default = router;
+export default router;
 //# sourceMappingURL=api_v1.js.map
